@@ -19,9 +19,9 @@ import { useUserContext } from "@/context/AutnContext"
   const { toast } = useToast()
   const { checkAuthUser, isLoading: isUserLoading } =  useUserContext();
   const navigate = useNavigate();
-  const {mutateAsync: createUserAccount, isLoading: isCreatingUser} = useCreateUserAccountMutation();
+  const {mutateAsync: createUserAccount, isPending: isCreatingUser} = useCreateUserAccountMutation();
 
-  const {mutateAsync: signInAccount, isLoading: isSigningIn }= useSignInAccount();
+  const {mutateAsync: signInAccount, isPending: isSigningIn }= useSignInAccount();
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof SignupValidation>>({
@@ -60,7 +60,7 @@ import { useUserContext } from "@/context/AutnContext"
       form.reset();
       navigate('/')
     } else {
-      retunr toast({title: 'sign up failed. please try again'})
+      return toast({title: 'sign up failed. please try again'})
     }
   }
 
