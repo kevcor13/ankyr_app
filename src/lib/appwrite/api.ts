@@ -43,7 +43,7 @@ export async function saveUserToDB(user:{
             appwriteConfig.databaseId,
             appwriteConfig.userCollectionId,
             ID.unique(),
-            user,
+            user
         )
         return newUser;
     } catch(error){
@@ -81,5 +81,6 @@ export async function getCurrentUser(){
         return currentUser.documents[0];
     } catch (error) {
         console.log(error);
+        return null;
     }
 }

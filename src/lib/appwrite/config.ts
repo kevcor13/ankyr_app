@@ -1,5 +1,4 @@
 import { Client, Account, Databases, Storage, Avatars} from 'appwrite'
-import { url } from 'inspector';
 
 export const appwriteConfig = {
     projectId: import.meta.env.VITE_APPWRITE_PROJECT_ID,
