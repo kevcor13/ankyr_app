@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { useForm } from "react-hook-form"
 import {SignupValidation} from "@/lib/validation"
 import { Loader } from "lucide-react"
-import { useCreateUserAccountMutation, useSignInAccount } from "@/lib/react-query/queriesAndMutations"
+import { useCreateUserAccount, useSignInAccount } from "@/lib/react-query/queriesAndMutations"
 import { useUserContext } from "@/context/AutnContext"
  
  
@@ -19,32 +19,32 @@ import { useUserContext } from "@/context/AutnContext"
   const navigate = useNavigate();
 
 //quaries
-  const {mutateAsync: createUserAccount, isPending: isCreatingUser} = useCreateUserAccountMutation();
-  const {mutateAsync: signInAccount, isPending: isSigningIn }= useSignInAccount();
+  const {mutateAsync: createUserAccount, isPending: isCreatingUser} = useCreateUserAccount();
+  const {mutateAsync: signInAccount, isPending: isSigningInUser }= useSignInAccount();
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof SignupValidation>>({
     resolver: zodResolver(SignupValidation),
     defaultValues: {
-      name: '',
+      name: "",
       username: "",
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
   })
  
   // 2. Define a submit handler.
- const handleSignup = async (values: z.infer<typeof SignupValidation>) => {
-    //create the user 
+    async function onSubmit(values: z.infer<typeof SignupValidation>){
+     //create the user 
     const newUser = await createUserAccount(values);
+    console.log('new user created:'+  newUser);
     
     if(!newUser){
       return toast({ title: "Sign up failed. please try  @ again",})
     }
-
     const session = await signInAccount({
-      email:  values.email,
-      password:values.password,
+      email: values.email,
+      password: values.password,
     })
 
     if(!session){
@@ -62,7 +62,7 @@ import { useUserContext } from "@/context/AutnContext"
     } else {
       return toast({title: 'sign up failed. please try again'})
     }
-  }
+  };
 
    return (
 
@@ -72,7 +72,7 @@ import { useUserContext } from "@/context/AutnContext"
         <h2 className="h3-bold md:h2-bold pt-5 sm:pt-12" > Create new account</h2>
         <p className="text-light-3 small-medium md:base-regular mt-2">To use Gramsnap enter account details </p>
         
-        <form onSubmit={form.handleSubmit(handleSignup)} className="flex-col gap-5 w-full mt-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex-col gap-5 w-full mt-4">
         <FormField
           control={form.control}
           name="name"
@@ -130,7 +130,9 @@ import { useUserContext } from "@/context/AutnContext"
             <div className = "flex-center gap-2">
                <Loader /> Loading...
             </div>
-          ): "Sign-up"}
+          ): (
+            "Sign-up"
+          )}
         </Button>
 
       <p className="text-small-regular text-light-2 text-center mt-2">
