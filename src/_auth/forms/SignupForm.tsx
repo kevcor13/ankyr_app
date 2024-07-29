@@ -38,7 +38,7 @@ import { useUserContext } from "@/context/AutnContext"
      //create the user 
     const newUser = await createUserAccount(values);
     console.log('new user created:'+  newUser);
-    
+  
     if(!newUser){
       return toast({ title: "Sign up failed. please try  @ again",})
     }
@@ -46,8 +46,9 @@ import { useUserContext } from "@/context/AutnContext"
       email: values.email,
       password: values.password,
     })
-
+    
     if(!session){
+      console.log("new session is" + session);
       toast({title: 'sign in failed. please tyr again.'})
 
       navigate("/sign-in");
