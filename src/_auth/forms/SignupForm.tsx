@@ -37,7 +37,6 @@ import { useUserContext } from "@/context/AutnContext"
     async function onSubmit(values: z.infer<typeof SignupValidation>){
      //create the user 
     const newUser = await createUserAccount(values);
-    console.log('new user created:'+  newUser);
   
     if(!newUser){
       return toast({ title: "Sign up failed. please try  @ again",})
@@ -59,7 +58,7 @@ import { useUserContext } from "@/context/AutnContext"
 
     if(isLoggedIn) {
       form.reset();
-      navigate('/')
+      navigate("/")
     } else {
       return toast({title: 'sign up failed. please try again'})
     }

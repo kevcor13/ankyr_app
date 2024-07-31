@@ -4,14 +4,14 @@
  import { Link , useNavigate} from "react-router-dom"
  import { Button } from "@/components/ui/button"
 import {
-  Form, FormControl,FormDescription,FormField,FormItem,FormLabel,FormMessage,
+  Form, FormControl,FormField,FormItem,FormLabel,FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
  import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { SigninValidation } from "@/lib/validation"
 import { Loader } from "lucide-react"
-import { useCreateUserAccount, useSignInAccount } from "@/lib/react-query/queriesAndMutations"
+import { useSignInAccount } from "@/lib/react-query/queriesAndMutations"
 import { useUserContext } from "@/context/AutnContext"
  
  
@@ -21,7 +21,7 @@ import { useUserContext } from "@/context/AutnContext"
   const navigate = useNavigate();
 
 //quaries
-  const {mutateAsync: signInAccount, isPending: isSigningIn }= useSignInAccount();
+  const {mutateAsync: signInAccount, isPending }= useSignInAccount();
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof SigninValidation>>({
@@ -34,17 +34,12 @@ import { useUserContext } from "@/context/AutnContext"
  
   // 2. Define a submit handler.
  const handleSignup = async (values: z.infer<typeof SigninValidation>) => {
-    //create the user 
 
-    const session = await signInAccount({
-      email:  values.email,
-      password:values.password,
-    })
+    const session = await signInAccount(values)
 
     if(!session){
       toast({title: 'sign in failed. please tyr again.'})
-
-      navigate("/sign-in");
+      
       return;
     }
 
