@@ -1,6 +1,5 @@
-import { Section } from 'lucide-react'
 import { useEffect } from 'react'
-import { Link, NavLink,useNavigate} from 'react-router-dom'
+import { Link, NavLink,useNavigate, useLocation} from 'react-router-dom'
 import { Button } from '../button'
 import { useSignOutAccount } from '@/lib/react-query/queriesAndMutations'
 import { useUserContext } from '@/context/AutnContext'
@@ -10,9 +9,11 @@ import { INavLink } from '@/types'
 
 
 const LeftSidebar = () => {
+    const { pathname } = useLocation();
     const { mutate: signOut, isSuccess } = useSignOutAccount()
     const navigate = useNavigate();
     const { user } = useUserContext();
+
     
     useEffect(() => {
         if(isSuccess) navigate(0);
@@ -45,9 +46,11 @@ const LeftSidebar = () => {
                 </Link>
                 <ul className="flex flex-col gap-6">
                     {sidebarLinks.map((link: INavLink) => {
+                        const isActive = pathname === link.route;
+
                         return(
                             <li key={link.label}
-                             className="leftsidebar-link">
+                             className={`leftsidebar-link group ${isActive && 'bg-primary-500'}`}>
                                 <NavLink
                                  to={link.route} 
                                  className="flex gap-4 items-center p-4"
@@ -55,7 +58,7 @@ const LeftSidebar = () => {
                                     <img
                                         src={link.imgURL}
                                         alt={link.label} 
-                                        className="group-hover:invert-whi"
+                                        className={`group-hover:invert-white ${isActive && 'invert-white'}`}
                                     />
                                     {link.label}
                                 </NavLink>
@@ -64,6 +67,13 @@ const LeftSidebar = () => {
                     })}
                 </ul>
             </div>
+            <Button 
+                variant= "ghost" 
+                className="shad-button_ghost"
+                onClick={() => signOut()}>
+                <img src="assets/icons/logout.svg" alt="logout" />
+                <p className="small-meidum lg-base-medium">Logout</p>
+            </Button>
         </nav>
     )
 }
