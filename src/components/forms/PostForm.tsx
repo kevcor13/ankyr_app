@@ -15,23 +15,42 @@ import { Textarea } from "../ui/textarea"
 import FileUploader from "../ui/shared/FileUploader"
 import { PostValidation } from "@/lib/validation"
 import { Models } from "appwrite"
- type PostFormProps ={
+import { useUserContext } from "@/context/AutnContext"
+import { useToast } from "../ui/use-toast"
+import { useNavigate } from "react-router-dom"
+import { useCreatePost } from "@/lib/react-query/queriesAndMutations"
+ 
+
+type PostFormProps ={
     post?: Models.Document;
  }
 
-const PostForm = ({post}: PostFormProps) => {
-  const form = useForm<z.infer<typeof PostValidation>>({
-    resolver: zodResolver(PostValidation),
-    defaultValues: {
-      caption: post ? post?.caption : "",
-      file: [],
-      location: post ? post?.location : "",
-      tags: post ? post.tags.join(',') : "" 
-    },
-  })
+    const PostForm = ({post}: PostFormProps) => {
+        const { mutateAsync: createPost, isPending: isLoadingCreate } = useCreatePost()
+        const { user } = useUserContext();
+        const { toast } = useToast();
+        const navigate = useNavigate();
+        
+        const form = useForm<z.infer<typeof PostValidation>>({
+            resolver: zodResolver(PostValidation),
+            defaultValues: {
+                caption: post ? post?.caption : "",
+                file: [],
+                location: post ? post?.location : "",
+                tags: post ? post.tags.join(',') : "" 
+            },
+        })
  
-  function onSubmit(values: z.infer<typeof PostValidation>) {
-    console.log(values)
+async function onSubmit(values: z.infer<typeof PostValidation>) {
+    const newPost = await createPost({
+        ...values,
+        userId: user.id,
+    })
+    if(!newPost){
+        toast({title: 'please try again'})
+    }
+
+    navigate('/')
   }
     return (
         <Form {...form}>

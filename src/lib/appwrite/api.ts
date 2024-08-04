@@ -1,6 +1,8 @@
-import { ID, Query } from "appwrite";
-import { INewUser } from "@/types";
-import { account, appwriteConfig, avatars, databases } from "./config";
+import { ID, ImageGravity, Query } from "appwrite";
+import { INewPost, INewUser } from "@/types";
+import { account, appwriteConfig, avatars, databases, storage } from "./config";
+import { Forklift } from "lucide-react";
+import { OK } from "zod";
 
 export async function createUserAccount(user: INewUser){
     try{
@@ -91,5 +93,94 @@ export async function signOutAccount(){
         return session;
     } catch (error) {
         console.log(error);
+    }
+}
+
+export async function createPost(post: INewPost) {
+    try {
+        // upload image from storage '
+        const uploadedFile = await uploadFile(post.file[0])
+        console.log("file id is " + uploadedFile?.$id)
+        
+        if(!uploadedFile) throw Error;
+
+        const fileUrl = await getFilePreview(uploadedFile.$id);
+
+        if(!fileUrl) {
+            deleteFile(uploadedFile.$id)
+            throw Error;
+        }
+
+        //convert tags in an array
+
+        const tags = post.tags?.replace(/ /g,'').split(',') || [];
+
+        //save post 
+        console.log("im still here file id is " + uploadedFile.$id)
+        console.log("this is fileUrl " + fileUrl)
+
+        const newPost = await databases.createDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.postCollectionId,
+            ID.unique(),
+            {
+                creator: post.userId,
+                imageUrl: fileUrl,
+                imageid: uploadedFile.$id,
+                location: post.location,
+                tags: tags,
+            }
+        )
+        console.log("post id is " + newPost.$id)
+
+        if(!newPost){
+            await deleteFile(uploadedFile.$id)
+            throw Error;
+        }
+        return newPost;
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export async function uploadFile(file: File){
+    try {
+        const uploadedFile = await storage.createFile(
+            appwriteConfig.storageId,
+            ID.unique(),
+            file
+            )
+        return uploadedFile
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export async function getFilePreview(fileId: string): Promise<string | undefined>{
+    try {
+        const fileUrl = await storage.getFilePreview(
+            appwriteConfig.storageId,
+            fileId,
+            2000,
+            2000,
+            ImageGravity.Top,
+            100,
+        )
+        if (fileUrl instanceof URL) {
+            return fileUrl.toString(); 
+        } else {
+            return JSON.stringify(fileUrl); 
+        }
+    } catch (error) {
+        console.log(error) 
+    }
+}
+
+export async function deleteFile(fileId: string){
+    try {
+        await storage.deleteFile(appwriteConfig.storageId, fileId)
+        return{status:'ok'}
+    } catch (error) {
+        console.log(error)
     }
 }
