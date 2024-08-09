@@ -2,14 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Button } from "@/components/ui/button"
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
+import { Form, FormControl, FormField, FormItem, FormLabel,FormMessage, } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "../ui/textarea"
 import FileUploader from "../ui/shared/FileUploader"
@@ -18,15 +11,19 @@ import { Models } from "appwrite"
 import { useUserContext } from "@/context/AutnContext"
 import { useToast } from "../ui/use-toast"
 import { useNavigate } from "react-router-dom"
-import { useCreatePost } from "@/lib/react-query/queriesAndMutations"
+import { useCreatePost, useUpdatePost } from "@/lib/react-query/queriesAndMutations"
+import { updatePost } from "@/lib/appwrite/api"
+import { UpdateProfile } from "@/_root/pages"
  
 
 type PostFormProps ={
     post?: Models.Document;
+  action: 'create' | 'update'
  }
 
-    const PostForm = ({post}: PostFormProps) => {
+    const PostForm = ({post, action}: PostFormProps) => {
         const { mutateAsync: createPost, isPending: isLoadingCreate } = useCreatePost()
+        const { mutateAsync: updatePost, isPending: isLoadingUpdate } = useUpdatePost()
         const { user } = useUserContext();
         const { toast } = useToast();
         const navigate = useNavigate();
@@ -42,6 +39,20 @@ type PostFormProps ={
         })
  
 async function onSubmit(values: z.infer<typeof PostValidation>) {
+    if(post && action === 'update'){
+      const updatedPost = await updatePost({
+        ...values,
+        postId: post.$id,
+        imageId: post?.imageId,
+        imageUrl: post?.imageUrl,
+      })
+      if(!updatedPost){
+        toast({title: 'please try again'})
+      }
+
+      return navigate(`/post/${post.$id}`)
+    }
+
     const newPost = await createPost({
         ...values,
         userId: user.id,
@@ -116,8 +127,10 @@ async function onSubmit(values: z.infer<typeof PostValidation>) {
           )}
         />
         <div className="flex gap-4 items-center justify-end">
-        <Button type="button" className="shad-button_dark_4">Cancel</Button>
-        <Button type="submit" className="shad-button_primary whitespace-nowrap">Submit</Button>
+        <Button 
+            type="submit" 
+            className="shad-button_primary whitespace-nowrap" 
+            disabled={isLoadingCreate || isLoadingUpdate}>{isLoadingCreate || isLoadingUpdate && 'loading...'} {action} Post</Button>
         </div>
       </form>
     </Form>
