@@ -12,9 +12,6 @@ import { useUserContext } from "@/context/AutnContext"
 import { useToast } from "../ui/use-toast"
 import { useNavigate } from "react-router-dom"
 import { useCreatePost, useUpdatePost } from "@/lib/react-query/queriesAndMutations"
-import { updatePost } from "@/lib/appwrite/api"
-import { UpdateProfile } from "@/_root/pages"
- 
 
 type PostFormProps ={
     post?: Models.Document;
@@ -60,7 +57,7 @@ async function onSubmit(values: z.infer<typeof PostValidation>) {
     if(!newPost){
         toast({title: 'please try again'})
     }
-
+    
     navigate('/')
   }
     return (

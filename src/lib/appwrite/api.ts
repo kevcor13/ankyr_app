@@ -1,5 +1,5 @@
-import { ID, ImageGravity, Query } from "appwrite";
-import { INewPost, INewUser, IUpdatePost } from "@/types";
+import { ID, ImageGravity, Models, Query } from "appwrite";
+import { ILoseWeightInfo, INewChallenge, INewPost, INewUser, IUpdatePost, IUpdateUserInfo } from "@/types";
 import { account, appwriteConfig, avatars, databases, storage } from "./config";
 
 export async function createUserAccount(user: INewUser){
@@ -374,4 +374,96 @@ export async function getUserById(userId: string) {
     }
   }
 
-  
+export const createChallenge = async (challenge: INewChallenge) => {
+    return databases.createDocument(
+        appwriteConfig.databaseId, appwriteConfig.userProgressId, ID.unique(), challenge);
+};
+export const getChallenges = async (userId: string) => {
+    const response = await databases.listDocuments(appwriteConfig.databaseId, appwriteConfig.userProgressId, [
+        Query.equal('userId', userId),
+    ]);
+    return response.documents;
+};
+export const updateChallenge = async (challengeId: string, updates: { completed: boolean }) => {
+    return databases.updateDocument(appwriteConfig.databaseId, appwriteConfig.userProgressId, challengeId, updates);
+};
+export const deleteChallenge = async (challengeId: string) => {
+    return databases.deleteDocument(appwriteConfig.databaseId, appwriteConfig.userProgressId, challengeId);
+};
+
+export const updateUserInfo = async (userId: string, updates: IUpdateUserInfo) => {
+    try {
+        const response = await databases.updateDocument(
+            appwriteConfig.databaseId, 
+            appwriteConfig.userCollectionId, 
+            userId, 
+            {
+                gender: updates.gender,
+                age: updates.age,
+                weight: updates.weight,
+                fitness: updates.fitness,
+                workoutdays: updates.workoutdays,
+                goal: updates.goal,
+                complete: true,
+            }
+        );
+        return response;
+    } catch (error) {
+        console.error("Failed to update user information:", error);
+        throw error;
+    }
+};
+
+
+export const fetchUserGoal = async (userId: string) => {
+    try {
+        const response = await databases.getDocument(appwriteConfig.databaseId,appwriteConfig.userCollectionId, userId);
+        console.log(response.goal)
+        return response.goal;
+
+    } catch (error) {
+        console.error('Error fetching user goal:', error);
+        throw error;
+    }
+};
+
+export const setUserGoalCompletion = async (userId: string) => {
+    try {
+        const response = await databases.updateDocument(appwriteConfig.databaseId, appwriteConfig.userCollectionId, userId, {
+            complete: true,
+        });
+        return response;
+    } catch (error) {
+        console.error('Error setting user goal completion:', error);
+        throw error;
+    }
+};
+
+export const fetchUserCompletion = async (userId: string) => {
+    try {
+        const complete = await databases.getDocument(appwriteConfig.databaseId, appwriteConfig.userCollectionId, userId);
+        console.log(complete.complete);
+        return complete.complete;
+    } catch (error) {
+        console.log(error);
+        throw new Error('Failed to fetch user completion');
+    }
+};
+
+export const loseWeightChallange = async (user: string, chosenWorkout: string, days: number) => {
+    try {
+        const document = await databases.createDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.loseWeightId,
+            ID.unique(),
+            {
+                user,
+                days,
+                chosenWorkout,
+            }
+        )
+        return document
+    } catch (error) {
+        console.log(error)
+    }
+}

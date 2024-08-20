@@ -1,0 +1,19 @@
+.questionnaire-form {
+    color: white;
+}
+
+.questionnaire-form .question {
+    color: white;
+}
+
+.questionnaire-form label {
+    color: white;
+}
+
+.questionnaire-form legend {
+    color: white;
+}
+
+.questionnaire-form input {
+    color: black; /* Keep input text black for readability */
+}

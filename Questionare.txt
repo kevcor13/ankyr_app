@@ -1,0 +1,22 @@
+1. what is your gender? 
+    A. Male 
+    B. Female 
+2. What is your age? 
+3. What is your weight? 
+4. What is your fitnes level? 
+    A. Beginner 
+    B. Intermediate
+    C. Expert 
+5. How many days do you workout per week?
+    A. 0 
+    B. 1-2
+    C. 3-4
+    D. 5+
+6. Do you play a Sport? 
+    A. yes 
+    B. no 
+7. What is your goal?
+    A. lose weight 
+    B. gain muscle
+    C. calisthenics 
+    D. sport endurance. 

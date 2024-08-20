@@ -4,9 +4,10 @@ import {
     useQueryClient,
     useInfiniteQuery,
 } from '@tanstack/react-query'
-import { createPost, createUserAccount, deletePost, deleteSavedPost, getCurrentUser, getInfinitePost, getPostById, getRecentPosts, getUserById, likePost, savePost, searchPost, signInAccount, signOutAccount, updatePost } from "@/lib/appwrite/api"
-import { INewPost, INewUser, IUpdatePost } from '@/types'
+import { createChallenge, createPost, createUserAccount, deleteChallenge, deletePost, deleteSavedPost, fetchUserCompletion, fetchUserGoal, getChallenges, getCurrentUser, getInfinitePost, getPostById, getRecentPosts, getUserById, likePost, loseWeightChallange, savePost, searchPost, setUserGoalCompletion, signInAccount, signOutAccount, updateChallenge, updatePost, updateUserInfo } from "@/lib/appwrite/api"
+import { ILoseWeightInfo, INewChallenge, INewPost, INewUser, IUpdatePost, IUpdateUserInfo } from '@/types'
 import { QUERY_KEYS } from './queryKeys';
+import { create } from 'domain';
   
 
 export const useCreateUserAccount = () =>{
@@ -176,5 +177,77 @@ export const useGetUserById = (userId: string) => {
       queryFn: () => getUserById(userId),
       enabled: !!userId,
     });
-  };
+};
 
+export const useCreateWeeklyChallenges = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (userId: string) => {
+            const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            const promises = weekDays.map(day =>
+                createChallenge({
+                    title: `Challenge for ${day}`,
+                    description: `Complete your task for ${day}`,
+                    day,
+                    userId,
+                    completed: false,
+                })
+            );
+
+            await Promise.all(promises);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: [QUERY_KEYS.GET_CHALLENGES]});
+        },
+    });
+};
+export const useGetChallenges = (userId: string) => {
+    return useQuery({
+        queryKey: [QUERY_KEYS.GET_CHALLENGES, userId],
+        queryFn: () => getChallenges(userId),
+    });
+};
+export const useUpdateChallenge = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({ challengeId, updates }: { challengeId: string; updates: { completed: boolean } }) =>
+            updateChallenge(challengeId, updates),
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: [QUERY_KEYS.GET_CHALLENGES]});
+        },
+    });
+};
+export const useDeleteChallenge = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (challengeId: string) => deleteChallenge(challengeId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: [QUERY_KEYS.GET_CHALLENGES]});
+        },
+    });
+};
+export const useUpdateUserInfo = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async ({ userId, updates }: { userId: string; updates: IUpdateUserInfo  }) => {
+            return updateUserInfo(userId, updates );
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey:[QUERY_KEYS.GET_UPDATE_USER_GOALS]});
+        },
+        onError: (error) => {
+            console.error('Error updating user information:', error);
+            alert('Failed to update user information.');
+        },
+    });
+};
+export const useFetchUserCompletionMutation = (userId: string) => {
+    return useQuery({
+        queryKey: [QUERY_KEYS.GET_COMPLETE],
+        queryFn: () => fetchUserCompletion(userId),
+    })
+};

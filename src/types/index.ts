@@ -42,12 +42,14 @@ export type INavLink = {
   };
   
   export type IUser = {
+    $id: string;
     id: string;
     name: string;
     username: string;
     email: string;
     imageUrl: string;
     bio: string;
+    questionareCompleted: boolean;
   };
   
   export type INewUser = {
@@ -56,3 +58,32 @@ export type INavLink = {
     username: string;
     password: string;
   };
+
+  export interface INewChallenge {
+    title: string;
+    description: string;
+    userId: string;  
+}
+
+export interface INewChallenge {
+  title: string;
+  description: string;
+  day: string;
+  userId: string;
+  completed?: boolean;
+}
+
+export interface IUpdateUserInfo{
+  gender: string;
+  age: number;
+  weight: number;
+  fitness: string;
+  workoutdays: number;
+  goal: string;
+}
+
+export interface ILoseWeightInfo{
+  userId: string
+  chosenWorkout: string;
+  days?: number;
+}

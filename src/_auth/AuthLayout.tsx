@@ -1,3 +1,4 @@
+
 import { Outlet, Navigate} from 'react-router-dom';
 
 export default function AuthLayout() {
@@ -19,6 +20,7 @@ export default function AuthLayout() {
           />
         </>
     )}
+    
     </>
   )
 }
