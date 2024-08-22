@@ -1,5 +1,6 @@
 import { useUserContext } from "@/context/AutnContext";
-import { loseWeightChallange } from "@/lib/appwrite/api";
+import { fetchDocumentIdByField, loseWeightChallange, updateChallenge, updateUserDocument } from "@/lib/appwrite/api";
+import { appwriteConfig } from "@/lib/appwrite/config";
 import { useState } from "react";
 
 interface LoseWeightProps {
@@ -12,11 +13,11 @@ const LoseWeight: React.FC<LoseWeightProps> = ({ onComplete }) => {
     const [chosenWorkout, setChosenWorkout] = useState<string>('');
     const [changeWorkout, setChangeWorkout] = useState<boolean>(false);
     const [days, setDays] = useState<number>(0);
-
     const handleSubmit = async () => {
         if (chosenWorkout !== null) {
             try {
-                await loseWeightChallange(user.id, chosenWorkout, days);
+                const documentID = await fetchDocumentIdByField(appwriteConfig.loseWeightId, 'user', user.id)
+                await updateUserDocument( documentID, appwriteConfig.loseWeightId, chosenWorkout, days)
                 onComplete();
             } catch (error) {
                 console.log(error);

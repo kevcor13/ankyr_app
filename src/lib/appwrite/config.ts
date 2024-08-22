@@ -10,8 +10,10 @@ export const appwriteConfig = {
     savesCollectionId: "66a1d227001b89c370ae",
     userProgressId: '66ba84ec00127fe872da',
     moreUserInfoId: '66c105ac001fd97dd857',
-    loseWeightId: '66c2bdd300256cfad0f1'
+    loseWeightId: '66c2bdd300256cfad0f1',
+    gainMuscleId: '66c75ede00168f8fc93a'
 }
+
 
 export const client = new Client();
 

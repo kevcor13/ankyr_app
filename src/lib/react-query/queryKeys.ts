@@ -18,7 +18,11 @@ export enum QUERY_KEYS {
     //  SEARCH KEYS
     SEARCH_POSTS = "getSearchPosts",
     GET_CHALLENGES = "getChallanges",
-    GET_COMPLETE  = "getComplete"
+    GET_COMPLETE  = "getComplete",
+    USER_GOAL = "getUserGoal",
 
+    GET_USER_COMPLETION = "getUserGoalCompletion",
+
+    GET_LOSE_WEIGHT_ID = "getLoseWeightId"
     
   }

@@ -2,9 +2,9 @@
 import React, { useState } from 'react';
 import { useUpdateUserInfo } from '@/lib/react-query/queriesAndMutations'; 
 import { useUserContext } from '@/context/AutnContext';
-import { Input } from '../ui/input';
 import '@/styles/QuestionnaireForm.css';
-import LoseWeight from './PersonalQuestions/LoseWeight';
+import { Input } from '@/components/ui/input';
+import { creatingChallangeDocument, gainMuscleChallange } from '@/lib/appwrite/api';
 
 interface QuestionnaireFormProps {
     onComplete: () => void;

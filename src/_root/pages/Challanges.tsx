@@ -1,74 +1,14 @@
-/*
+
 import { useState, useEffect } from 'react';
 import { useUserContext } from '@/context/AutnContext';
-import QuestionnaireForm from '@/components/forms/QuestionareForm';
-import { fetchUserCompletion, fetchUserGoal } from '@/lib/appwrite/api';
+import { creatingChallangeDocument, fetchDocumentIdByField, fetchUserCompletion, fetchUserGoal, fetchUserSecondCompletion, setUserGoalCompletion,  } from '@/lib/appwrite/api';
 import LoseWeight from '@/components/forms/PersonalQuestions/LoseWeight';
+import GainMuscle from '@/components/forms/PersonalQuestions/GainMuscle';
+import { isCompositeComponent } from 'react-dom/test-utils';
+import { useParams } from 'react-router-dom';
+import { appwriteConfig } from '@/lib/appwrite/config';
 
-const ChallengesPage = () => {
-    const { user } = useUserContext();
 
-    const [isQuestionnaireVisible, setIsQuestionnaireVisible] = useState<boolean>();
-    const [ isLoseWeight, setIsLoseWeight] = useState<boolean>();
-    const [userGoal, setUserGoal] = useState<string>('');
-    useEffect(() => {
-        const fetchUserData = async () => {
-            if (!user.id) return;
-            try {
-                const goal = await fetchUserGoal(user.id);
-                setUserGoal(goal);
-
-                const completed = await fetchUserCompletion(user.id);
-
-                if (goal === 'lose weight' && !completed) {
-                    setIsLoseWeight(true);
-                }
-
-                if (!completed) {
-                    setIsQuestionnaireVisible(true);
-                }
-            } catch (error) {
-                console.error('Error retrieving user data:', error);
-            }
-        };
-
-        fetchUserData();
-    }, [user.id]);
-
-    if(!user.id){
-        return <div> ...Loading </div>
-    }
-
-    return (
-        <div className="challenges-page">
-            <h2>Challenges</h2>
-            {isQuestionnaireVisible ? (
-                <QuestionnaireForm onComplete={() => { setIsQuestionnaireVisible(false); } } />
-            ) : (
-                <>
-                {isLoseWeight ? (
-                    <LoseWeight onComplete={() => (setIsLoseWeight(false))}/>
-                ) : (
-                        <div className="challenge-box bg-blue-500 text-white p-4 rounded shadow-md">
-                            <h3 className="text-xl font-bold">Todays Challange</h3>
-                            <p className="text-lg mt-2">{userGoal}</p>
-                        </div>
-                    )}
-                <>
-                </>
-                </>
-            )}
-        </div>
-    )
-};
-
-export default ChallengesPage;
-*/
-import { useState, useEffect } from 'react';
-import { useUserContext } from '@/context/AutnContext';
-import QuestionnaireForm from '@/components/forms/QuestionareForm';
-import { fetchUserCompletion, fetchUserGoal } from '@/lib/appwrite/api';
-import LoseWeight from '@/components/forms/PersonalQuestions/LoseWeight';
 
 // Utility function to read the text file
 const fetchChallenges = async () => {
@@ -78,33 +18,49 @@ const fetchChallenges = async () => {
 };
 
 const ChallengesPage = () => {
-    const { user } = useUserContext();
-    const [isQuestionnaireVisible, setIsQuestionnaireVisible] = useState<boolean>(false);
-    const [isLoseWeight, setIsLoseWeight] = useState<boolean>(false);
-    const [userGoal, setUserGoal] = useState<string>('');
+    const { user } = useUserContext()
+    const [isLoseWeight, setIsLoseWeight] = useState<boolean>();
+    const [isGainMuscle, setIsGainMuslce ] = useState<boolean>(false);
     const [challenges, setChallenges] = useState<string[]>([]);
     const [dailyChallenge, setDailyChallenge] = useState<string>('');
 
-    useEffect(() => {
         const fetchUserData = async () => {
             if (!user.id) return;
             try {
                 const goal = await fetchUserGoal(user.id);
-                setUserGoal(goal);
+                const completion = await fetchUserSecondCompletion(user.id)
+                await creatingChallangeDocument(user.id, goal)
 
-                const completed = await fetchUserCompletion(user.id);
+                console.log(goal)
+                console.log(completion)
 
-                if (goal === 'lose weight' && !completed) {
-                    setIsLoseWeight(true);
+                if(!completion || completion === null){
+                    if (goal === 'lose weight') {
+                        console.log("User's goal is to lose weight");
+                        setIsLoseWeight(true);
+                        await setUserGoalCompletion(user.id)
+                    } else {
+                        return 
+                    }
+                }
+                if(!completion || completion === null){
+                    if (goal === 'gain muscle') {
+                        console.log("User's goal is to gain muscle");
+                        setIsGainMuslce(true);
+                        await setUserGoalCompletion(user.id)
+                    } else {
+                        return 
+                    }
                 }
 
-                if (!completed) {
-                    setIsQuestionnaireVisible(true);
-                }
             } catch (error) {
                 console.error('Error retrieving user data:', error);
             }
         };
+
+    useEffect(() => {
+        fetchUserData();
+    }, [user.id]);
 
         const fetchChallengesData = async () => {
             try {
@@ -115,9 +71,6 @@ const ChallengesPage = () => {
             }
         };
 
-        fetchUserData();
-        fetchChallengesData();
-    }, [user.id]);
 
     useEffect(() => {
         if (challenges.length > 0) {
@@ -127,6 +80,9 @@ const ChallengesPage = () => {
         }
     }, [challenges]);
 
+
+    
+
     if (!user.id) {
         return <div>...Loading</div>;
     }
@@ -134,25 +90,22 @@ const ChallengesPage = () => {
     return (
         <div className="challenges-page">
             <h2>Challenges</h2>
-            {isQuestionnaireVisible ? (
-                <QuestionnaireForm onComplete={() => { setIsQuestionnaireVisible(false); }} />
-            ) : (
-                <>
-                    {isLoseWeight ? (
+                {isLoseWeight ? (
                         <LoseWeight onComplete={() => setIsLoseWeight(false)} />
                     ) : (
-                        <><div className="challenge-box bg-blue-500 text-white p-4 rounded shadow-md">
-                                    <h3 className="text-xl font-bold">Your daily challenge is:</h3>
-                                    <p className="text-lg mt-2">{userGoal}</p>
-                                </div><div>
-                                        <h3 className="text-xl font-bold">An optional Challange</h3>
-                                        <p className='text-lg mt-2'>{dailyChallenge}</p>
-                                    </div></>
-                    )}
-                </>
-            )}
+                        <>
+                          {isGainMuscle ? (
+                            <GainMuscle onComplete={() => setIsGainMuslce(false)} /> 
+                          ) : (
+                            <>
+
+                            </>
+                          )}  
+                    </>
+                )}
         </div>
     );
 };
 
 export default ChallengesPage;
+

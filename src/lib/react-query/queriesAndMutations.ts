@@ -4,7 +4,7 @@ import {
     useQueryClient,
     useInfiniteQuery,
 } from '@tanstack/react-query'
-import { createChallenge, createPost, createUserAccount, deleteChallenge, deletePost, deleteSavedPost, fetchUserCompletion, fetchUserGoal, getChallenges, getCurrentUser, getInfinitePost, getPostById, getRecentPosts, getUserById, likePost, loseWeightChallange, savePost, searchPost, setUserGoalCompletion, signInAccount, signOutAccount, updateChallenge, updatePost, updateUserInfo } from "@/lib/appwrite/api"
+import { createChallenge, createPost, createUserAccount, deleteChallenge, deletePost, deleteSavedPost, fetchDocumentById, fetchDocumentIdByField, fetchUserCompletion, fetchUserGoal, fetchUserLoseWeightCompletion, getChallenges, getCurrentUser, getInfinitePost, getLoseWeightDocument, getPostById, getRecentPosts, getUserById, likePost, loseWeightChallange, savePost, searchPost, setUserGoalCompletion, signInAccount, signOutAccount, updateChallenge, updatePost, updateUserInfo } from "@/lib/appwrite/api"
 import { ILoseWeightInfo, INewChallenge, INewPost, INewUser, IUpdatePost, IUpdateUserInfo } from '@/types'
 import { QUERY_KEYS } from './queryKeys';
 import { create } from 'domain';
@@ -250,4 +250,12 @@ export const useFetchUserCompletionMutation = (userId: string) => {
         queryKey: [QUERY_KEYS.GET_COMPLETE],
         queryFn: () => fetchUserCompletion(userId),
     })
+};
+export const useUserGoal = (userId: string) => {
+    return useQuery({
+        queryKey:[QUERY_KEYS.USER_GOAL, userId], 
+        queryFn:() => fetchUserGoal(userId), 
+        enabled: !!userId, 
+        retry: false, 
+    });
 };

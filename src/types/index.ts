@@ -42,14 +42,13 @@ export type INavLink = {
   };
   
   export type IUser = {
-    $id: string;
     id: string;
     name: string;
     username: string;
     email: string;
     imageUrl: string;
     bio: string;
-    questionareCompleted: boolean;
+    complete: boolean;
   };
   
   export type INewUser = {
@@ -87,3 +86,4 @@ export interface ILoseWeightInfo{
   chosenWorkout: string;
   days?: number;
 }
+
