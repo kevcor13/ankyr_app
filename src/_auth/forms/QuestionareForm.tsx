@@ -4,7 +4,7 @@ import { useUpdateUserInfo } from '@/lib/react-query/queriesAndMutations';
 import { useUserContext } from '@/context/AutnContext';
 import '@/styles/QuestionnaireForm.css';
 import { Input } from '@/components/ui/input';
-import { creatingChallangeDocument, gainMuscleChallange } from '@/lib/appwrite/api';
+import { creatingChallangeDocument } from '@/lib/appwrite/api';
 
 interface QuestionnaireFormProps {
     onComplete: () => void;
@@ -27,6 +27,7 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ onComplete }) => 
             try {
                 await updateUserInfo({ userId: user.id, updates: { gender, age, weight, fitness, workoutdays, goal } });
                 alert('Information saved successfully!');
+                await creatingChallangeDocument(user.id, goal);
                 onComplete(); 
             } catch (error) {
                 console.error("Error saving information:", error);
@@ -239,6 +240,7 @@ const QuestionnaireForm: React.FC<QuestionnaireFormProps> = ({ onComplete }) => 
             )
         }
     ];
+    
     return (
         <div className="questionnaire-form">
             <h2 className="text-2xl font-bold mb-4 text-white">User Questionnaire</h2>

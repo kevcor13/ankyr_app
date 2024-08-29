@@ -1,5 +1,5 @@
 import { useUserContext } from "@/context/AutnContext";
-import { fetchDocumentIdByField, loseWeightChallange, updateChallenge, updateUserDocument } from "@/lib/appwrite/api";
+import { fetchDocumentIdByField, loseWeightChallange, updateUserDocument } from "@/lib/appwrite/api";
 import { appwriteConfig } from "@/lib/appwrite/config";
 import { useState } from "react";
 
@@ -13,6 +13,7 @@ const LoseWeight: React.FC<LoseWeightProps> = ({ onComplete }) => {
     const [chosenWorkout, setChosenWorkout] = useState<string>('');
     const [changeWorkout, setChangeWorkout] = useState<boolean>(false);
     const [days, setDays] = useState<number>(0);
+    
     const handleSubmit = async () => {
         if (chosenWorkout !== null) {
             try {

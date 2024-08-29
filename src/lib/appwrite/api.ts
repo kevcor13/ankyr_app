@@ -30,7 +30,6 @@ export async function createUserAccount(user: INewUser){
     }
 }
 
-
 export async function saveUserToDB(user:{
     accountId: string;
     email: string;
@@ -372,25 +371,9 @@ export async function getUserById(userId: string) {
     } catch (error) {
       console.log(error);
     }
-  }
+}
 
-export const createChallenge = async (challenge: INewChallenge) => {
-    return databases.createDocument(
-        appwriteConfig.databaseId, appwriteConfig.userProgressId, ID.unique(), challenge);
-};
-export const getChallenges = async (userId: string) => {
-    const response = await databases.listDocuments(appwriteConfig.databaseId, appwriteConfig.userProgressId, [
-        Query.equal('userId', userId),
-    ]);
-    return response.documents;
-};
-export const updateChallenge = async (challengeId: string, updates: { completed: boolean }) => {
-    return databases.updateDocument(appwriteConfig.databaseId, appwriteConfig.userProgressId, challengeId, updates);
-};
-export const deleteChallenge = async (challengeId: string) => {
-    return databases.deleteDocument(appwriteConfig.databaseId, appwriteConfig.userProgressId, challengeId);
-};
-
+/** updates user information  */
 export const updateUserInfo = async (userId: string, updates: IUpdateUserInfo) => {
     try {
         const response = await databases.updateDocument(
@@ -414,7 +397,7 @@ export const updateUserInfo = async (userId: string, updates: IUpdateUserInfo) =
     }
 };
 
-
+/** extracts the user goal from database */
 export const fetchUserGoal = async (userId: string) => {
     try {
         const response = await databases.getDocument(appwriteConfig.databaseId,appwriteConfig.userCollectionId, userId);
@@ -424,6 +407,21 @@ export const fetchUserGoal = async (userId: string) => {
     } catch (error) {
         console.error('Error fetching user goal:', error);
         throw error;
+    }
+};
+
+export const fetchDocumentIdByField = async (collectionId: string, field: string, value: string) => {
+    try {
+        const response = await databases.listDocuments(appwriteConfig.databaseId, collectionId, [
+            Query.equal(field, value),
+        ]);
+        if (response.total > 0) {
+            return response.documents[0].$id;
+        } else {
+            throw new Error('No document found');
+        }
+    } catch (error) {
+        throw new Error('Failed to fetch document ID');
     }
 };
 
@@ -452,8 +450,20 @@ export const updateUserDocument = async (userId: string, collection: string, cho
     } catch (error) {
         console.log(error)
     }
+};
+
+/** this function will extract the user daily they choose after filling the LoseWeight questionare */
+export const UserDailyGoal = async (documentID: string, collection: string) => {
+    try {
+        const dailyGoal = await databases.getDocument(appwriteConfig.databaseId, collection, documentID);
+        console.log(dailyGoal)
+        return dailyGoal.chosenWorkout;
+    } catch (error) {
+        console.log(error)
+    }
 }
 
+/** user completion functions */
 export const fetchUserCompletion = async (userId: string) => {
     try {
         const complete = await databases.getDocument(appwriteConfig.databaseId, appwriteConfig.userCollectionId, userId);
@@ -464,7 +474,6 @@ export const fetchUserCompletion = async (userId: string) => {
         throw new Error('Failed to fetch user completion');
     }
 };
-
 export const fetchUserSecondCompletion = async (userId: string) => {
     try {
         const complete = await databases.getDocument(appwriteConfig.databaseId, appwriteConfig.userCollectionId, userId);
@@ -476,7 +485,7 @@ export const fetchUserSecondCompletion = async (userId: string) => {
     }
 };
 
-
+/** creation of documents to determine which challnage user choose */
 export const loseWeightChallange = async (values: ILoseWeightInfo) => {
     try {
         const document = await databases.createDocument(
@@ -490,7 +499,6 @@ export const loseWeightChallange = async (values: ILoseWeightInfo) => {
         console.log(error)
     }
 }
-
 export const gainMuscleChallange = async (days: number, completion: boolean) => {
     try {
         const document = await databases.updateDocument(
@@ -507,7 +515,6 @@ export const gainMuscleChallange = async (days: number, completion: boolean) => 
         console.log(error)
     }
 }
-
 export const creatingChallangeDocument = async (userId: string, userGoal: string) => {
     try {
         console.log(userGoal);
@@ -518,40 +525,38 @@ export const creatingChallangeDocument = async (userId: string, userGoal: string
                 ID.unique(),
                 {
                     user: userId,
-                    complete: false
                 }
             )
+            console.log('the lose weight challange has been created')
             return challange;
+
         } else if(userGoal === "gain muscle"){
                 const challange = await databases.createDocument(
                 appwriteConfig.databaseId,
                 appwriteConfig.gainMuscleId,
                 ID.unique(),
                 {
-                    user: userId,
-                    completion: false
+                    userID: userId,
                 }
             )
+            console.log('the gain muscle challange has been created')
             return challange;
-        }
+
+        } else if(userGoal === "calisthenics"){
+            const challange = await databases.createDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.calisthenics,
+            ID.unique(),
+            {
+                userID: userId,
+            }
+        )
+        console.log('the gain muscle challange has been created')
+        return challange;
+    }
         
 
     } catch (error) {
         console.log(error)
     }
 }
-
-export const fetchDocumentIdByField = async (collectionId: string, field: string, value: string) => {
-    try {
-        const response = await databases.listDocuments(appwriteConfig.databaseId, collectionId, [
-            Query.equal(field, value),
-        ]);
-        if (response.total > 0) {
-            return response.documents[0].$id;
-        } else {
-            throw new Error('No document found');
-        }
-    } catch (error) {
-        throw new Error('Failed to fetch document ID');
-    }
-};

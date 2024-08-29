@@ -1,26 +1,26 @@
 export const sidebarLinks = [
     {
-      imgURL: "/assets/icons/home.svg",
+      imgURL: "/assets/AnkyrIcons/icon.ankyrSVG.svg",
       route: "/",
       label: "Home",
     },
     {
-      imgURL: "/assets/icons/wallpaper.svg",
+      imgURL: "/assets/AnkyrIcons/icon.headphones.svg",
       route: "/explore",
       label: "Explore",
     },
     {
-      imgURL: "/assets/icons/people.svg",
+      imgURL: "/assets/AnkyrIcons/icon.library.svg",
       route: "/all-Users",
       label: "challanges",
     },
     {
-      imgURL: "/assets/icons/bookmark.svg",
+      imgURL: "/assets/AnkyrIcons/icon.profile.svg",
       route: "/saved",
       label: "Saved",
     },
     {
-      imgURL: "/assets/icons/gallery-add.svg",
+      imgURL: "/assets/AnkyrIcons/icon.streak.red.svg",
       route: "/create-post",
       label: "Create Post",
     },
@@ -28,28 +28,28 @@ export const sidebarLinks = [
   
   export const bottombarLinks = [
     {
-      imgURL: "/assets/icons/home.svg",
+      imgURL: "/assets/AnkyrIcons/icon.ankyrSVG.svg",
       route: "/",
       label: "Home",
     },
     {
-      imgURL: "/assets/icons/wallpaper.svg",
+      imgURL: "/assets/AnkyrIcons/icon.headphones.svg",
       route: "/explore",
       label: "Explore",
     },
     {
-      imgURL: "/assets/icons/bookmark.svg",
+      imgURL: "/assets/AnkyrIcons/icon.library.svg",
+      route: "/all-Users",
+      label: "challanges",
+    },
+    {
+      imgURL: "/assets/AnkyrIcons/icon.profile.svg",
       route: "/saved",
       label: "Saved",
     },
     {
-      imgURL: "/assets/icons/gallery-add.svg",
+      imgURL: "/assets/AnkyrIcons/icon.streak.red.svg",
       route: "/create-post",
-      label: "Create",
-    },
-    {
-      imgURL: "/assets/icons/people.svg",
-      route: "/all-Users",
-      label: "challanges",
+      label: "Create Post",
     },
   ];

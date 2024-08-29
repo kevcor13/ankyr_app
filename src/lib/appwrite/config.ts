@@ -11,7 +11,8 @@ export const appwriteConfig = {
     userProgressId: '66ba84ec00127fe872da',
     moreUserInfoId: '66c105ac001fd97dd857',
     loseWeightId: '66c2bdd300256cfad0f1',
-    gainMuscleId: '66c75ede00168f8fc93a'
+    gainMuscleId: '66c75ede00168f8fc93a',
+    calisthenics: '66cd5a3d0023a424653f'
 }
 
 
