@@ -22,9 +22,11 @@ const ChallengesPage = () => {
     const [isCalisthenics, setIsCalisthenics ] = useState<boolean>();
     const [dailyGoal, setDailyGoal] = useState<string[]>([]);
     const [challenges, setChallenges] = useState<string[]>([]);
-    // depending on daily goal set the collectionID in a string
+    // depending on daily goal set the collectionID in a string 
     const [collectionID, setCollectionID] = useState<string>(''); 
     const [dailyChallenge, setDailyChallenge] = useState<string>('');
+
+
     /** gets user data to check if the second questionare has been completed */
         const fetchUserData = async () => {
             if (!user.id) return;
@@ -68,6 +70,7 @@ const ChallengesPage = () => {
                 console.error('Error retrieving user data:', error);
             }
         };
+
         // in a seperate function, set the collectioID depending on the 
         // daily goal the user choose 
 
@@ -75,11 +78,11 @@ const ChallengesPage = () => {
             if(!user.id) return
             try {
                 const goal = await fetchUserGoal(user.id)
-                if(goal ==='lose weight'){
+                if(goal === 'lose weight'){
                     setCollectionID(appwriteConfig.loseWeightId)
-                } else if(goal ==='gain muscle'){
+                } else if(goal === 'gain muscle'){
                     setCollectionID(appwriteConfig.gainMuscleId)
-                } else if(goal ==='calisthenics'){
+                } else if(goal === 'calisthenics'){
                     setCollectionID(appwriteConfig.calisthenics)
                 }
                 console.log(collectionID);
@@ -87,11 +90,12 @@ const ChallengesPage = () => {
                 console.log(error);
             }
         }
-    /** this function will be called to extract the daily userGoal  */
+
+/** this function will be called to extract the daily userGoal  */
         const fetchDailyGoal = async () => {
             if (!user.id) return;
             try {
-                const documentID = await fetchDocumentIdByField(collectionID, 'userID', user.id);
+                const documentID = await fetchDocumentIdByField(collectionID, 'user', user.id);
                 const goal = await UserDailyGoal(documentID, collectionID);
                 setDailyGoal(goal);
             } catch (error) {
@@ -108,6 +112,8 @@ const ChallengesPage = () => {
 
     initializeData();
 }, [user.id]);
+
+
         const fetchChallengesData = async () => {
             try {
                 const lines = await fetchChallenges();
