@@ -412,6 +412,7 @@ export const fetchUserGoal = async (userId: string) => {
 
 export const fetchDocumentIdByField = async (collectionId: string, field: string, value: string) => {
     try {
+        console.log(collectionId);
         const response = await databases.listDocuments(appwriteConfig.databaseId, collectionId, [
             Query.equal(field, value),
         ]);
@@ -536,7 +537,7 @@ export const creatingChallangeDocument = async (userId: string, userGoal: string
                 appwriteConfig.gainMuscleId,
                 ID.unique(),
                 {
-                    userID: userId,
+                    users: userId,
                 }
             )
             console.log('the gain muscle challange has been created')

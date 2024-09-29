@@ -3,9 +3,9 @@ import { useState, useEffect } from 'react';
 import { useUserContext } from '@/context/AutnContext';
 import { creatingChallangeDocument, fetchDocumentIdByField, fetchUserCompletion, fetchUserGoal, fetchUserSecondCompletion, setUserGoalCompletion, UserDailyGoal,  } from '@/lib/appwrite/api';
 import LoseWeight from '@/components/forms/PersonalQuestions/LoseWeight';
-import GainMuscle from '@/components/forms/PersonalQuestions/GainMuscle';
 import { appwriteConfig } from '@/lib/appwrite/config';
 import Calisthenics from '@/components/forms/PersonalQuestions/Calisthenics';
+import GainMuscle from '@/components/forms/PersonalQuestions/GainMuscle';
 
 
 // Utility function to read the text file
@@ -82,6 +82,7 @@ const ChallengesPage = () => {
                     setCollectionID(appwriteConfig.loseWeightId)
                 } else if(goal === 'gain muscle'){
                     setCollectionID(appwriteConfig.gainMuscleId)
+                    console.log(collectionID)
                 } else if(goal === 'calisthenics'){
                     setCollectionID(appwriteConfig.calisthenics)
                 }
@@ -95,7 +96,7 @@ const ChallengesPage = () => {
         const fetchDailyGoal = async () => {
             if (!user.id) return;
             try {
-                const documentID = await fetchDocumentIdByField(collectionID, 'user', user.id);
+                const documentID = await fetchDocumentIdByField(collectionID, 'users', user.id);
                 const goal = await UserDailyGoal(documentID, collectionID);
                 setDailyGoal(goal);
             } catch (error) {

@@ -30,6 +30,7 @@ const AuthProvider = ({ children} : {children: React.ReactNode}) => {
     const [user, setUser] = useState<IUser>(INITIAL_USER)
     const [isLoading, setIsLoading] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isComplete, setIsComplete] = useState(false);
     
     const navigate = useNavigate();
     const checkAuthUser = async () => {
@@ -45,10 +46,13 @@ const AuthProvider = ({ children} : {children: React.ReactNode}) => {
                     email: currentAccount.email,
                     imageUrl: currentAccount.imageUrl,
                     bio: currentAccount.bio,
-                    complete: true
+                    complete: currentAccount.complete
                 })
 
                 setIsAuthenticated(true);
+                if(!currentAccount.complete){
+                    navigate("/questionare-form")
+                }
 
                 return true;
             }
