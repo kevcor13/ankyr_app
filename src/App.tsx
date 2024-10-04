@@ -11,6 +11,7 @@ import QuestionareForm from './_questions/forms/QuestionareForm';
 import GainMuscle from './_questions/forms/GainMuscle';
 import { useUserContext } from './context/AutnContext';
 import Transfer from './_questions/forms/Transfer';
+import LoseWeight from './_questions/forms/LoseWeight';
 
 const App = () => {
   const navigate = useNavigate();
@@ -34,6 +35,7 @@ const App = () => {
             <Route element={<QuestionLayout />}>
                 <Route path="/questionare-form" element={<QuestionareForm onComplete={getTheUserGoal} />} />
                 <Route path="/transfer" element={<Transfer />}/>
+                <Route path ="/lose-weight" element={<LoseWeight onComplete={handleQuestionnaireComplete}/>}/>
                 <Route path="/gainMuscle-form"  element={<GainMuscle onComplete={handleQuestionnaireComplete}/>}/>
             </Route>
 

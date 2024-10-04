@@ -2,29 +2,19 @@
 import { useState, useEffect } from 'react';
 import { useUserContext } from '@/context/AutnContext';
 import { creatingChallangeDocument, fetchDocumentIdByField, fetchUserCompletion, fetchUserGoal, fetchUserSecondCompletion, setUserGoalCompletion, UserDailyGoal,  } from '@/lib/appwrite/api';
-import LoseWeight from '@/components/forms/PersonalQuestions/LoseWeight';
+import LoseWeight from '@/_questions/forms/LoseWeight';
 import { appwriteConfig } from '@/lib/appwrite/config';
 import Calisthenics from '@/components/forms/PersonalQuestions/Calisthenics';
 import GainMuscle from '@/_questions/forms/GainMuscle';
 
 
-// Utility function to read the text file
-const fetchChallenges = async () => {
-    const response = await fetch('/dailyChallenges.txt'); // Update the path if necessary
-    const text = await response.text();
-    return text.split('\n').filter(line => line.trim() !== '');
-};
 
 const ChallengesPage = () => {
     const { user } = useUserContext()
     const [isLoseWeight, setIsLoseWeight] = useState<boolean>();
     const [isGainMuscle, setIsGainMuslce ] = useState<boolean>();
-    const [isCalisthenics, setIsCalisthenics ] = useState<boolean>();
     const [dailyGoal, setDailyGoal] = useState<string[]>([]);
-    const [challenges, setChallenges] = useState<string[]>([]); 
-    // depending on daily goal set the collectionID in a string 
     const [collectionID, setCollectionID] = useState<string>(''); 
-    const [dailyChallenge, setDailyChallenge] = useState<string>('');
 
 
     /** gets user data to check if the second questionare has been completed */
@@ -102,29 +92,7 @@ const ChallengesPage = () => {
         };
 
     initializeData();
-}, [user.id]);
-
-
-        const fetchChallengesData = async () => {
-            try {
-                const lines = await fetchChallenges();
-                setChallenges(lines);
-            } catch (error) {
-                console.error('Error fetching challenges:', error);
-            }
-        };
-
-
-    useEffect(() => {
-        if (challenges.length > 0) {
-            const today = new Date();
-            const index = today.getDate() % challenges.length; // Cycle through challenges
-            setDailyChallenge(challenges[index]);
-        }
-    }, [challenges]);
-
-
-    
+}, [user.id])
 
     if (!user.id) {
         return <div>...Loading</div>;
@@ -133,27 +101,6 @@ const ChallengesPage = () => {
     return (
         <div className="challenges-page">
             <h2>Challenges</h2>
-                {isLoseWeight ? (
-                    <>
-                        <LoseWeight onComplete={() => setIsLoseWeight(false)} />
-                    </>
-                    ) : (
-                        <>
-                          {isGainMuscle ? (
-                            <GainMuscle onComplete={() => setIsGainMuslce(false)} /> 
-                          ) : (
-                            <>
-                                {isCalisthenics ? (
-                                    <Calisthenics onComplete={() => setIsCalisthenics(false)}/>
-                                ) : (
-                                    <>
-                                        {dailyGoal !== null && <p>Goal Day: {dailyGoal}</p>}
-                                    </>
-                                )}
-                            </>
-                          )}  
-                    </>
-                )}
         </div>
     );
 };
