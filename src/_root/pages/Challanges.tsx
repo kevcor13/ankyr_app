@@ -5,7 +5,7 @@ import { creatingChallangeDocument, fetchDocumentIdByField, fetchUserCompletion,
 import LoseWeight from '@/components/forms/PersonalQuestions/LoseWeight';
 import { appwriteConfig } from '@/lib/appwrite/config';
 import Calisthenics from '@/components/forms/PersonalQuestions/Calisthenics';
-import GainMuscle from '@/components/forms/PersonalQuestions/GainMuscle';
+import GainMuscle from '@/_questions/forms/GainMuscle';
 
 
 // Utility function to read the text file
@@ -18,10 +18,10 @@ const fetchChallenges = async () => {
 const ChallengesPage = () => {
     const { user } = useUserContext()
     const [isLoseWeight, setIsLoseWeight] = useState<boolean>();
-    const [isGainMuscle, setIsGainMuslce ] = useState<boolean>(false);
+    const [isGainMuscle, setIsGainMuslce ] = useState<boolean>();
     const [isCalisthenics, setIsCalisthenics ] = useState<boolean>();
     const [dailyGoal, setDailyGoal] = useState<string[]>([]);
-    const [challenges, setChallenges] = useState<string[]>([]);
+    const [challenges, setChallenges] = useState<string[]>([]); 
     // depending on daily goal set the collectionID in a string 
     const [collectionID, setCollectionID] = useState<string>(''); 
     const [dailyChallenge, setDailyChallenge] = useState<string>('');
@@ -47,25 +47,16 @@ const ChallengesPage = () => {
                         return 
                     }
                 }
-                if(!completion || completion === null){
+                else if(!completion){
                     if (goal === 'gain muscle') {
                         console.log("User's goal is to gain muscle");
                         setIsGainMuslce(true);
                         await setUserGoalCompletion(user.id)
+                        console.log(completion)
                     } else {
                         return 
                     }
                 }
-                if(!completion || completion === null){
-                    if (goal === 'calisthenics') {
-                        console.log("User's goal is to calisthenics");
-                        setIsCalisthenics(true);
-                        await setUserGoalCompletion(user.id)
-                    } else {
-                        return 
-                    }
-                }
-
             } catch (error) {
                 console.error('Error retrieving user data:', error);
             }
@@ -108,7 +99,6 @@ const ChallengesPage = () => {
         const initializeData = async () => {
             await fetchUserData();
             await fecthCollectionID();
-            await fetchDailyGoal();
         };
 
     initializeData();

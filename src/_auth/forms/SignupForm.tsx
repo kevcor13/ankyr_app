@@ -59,7 +59,7 @@ import { useUserContext } from "@/context/AutnContext"
 
     if(isLoggedIn) {
       form.reset();
-      navigate("/");
+      navigate("/questionare-form");
     } else {
       return toast({title: 'sign up failed. please try again'})
     }
