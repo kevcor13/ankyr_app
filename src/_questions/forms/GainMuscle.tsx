@@ -1,5 +1,6 @@
 import { useUserContext } from "@/context/AutnContext";
-import { gainMuscleChallange } from "@/lib/appwrite/api";
+import { fetchDocumentIdByField, gainMuscleChallange, updateUserDocument } from "@/lib/appwrite/api";
+import { appwriteConfig } from "@/lib/appwrite/config";
 import { useState } from "react";
 
 interface GainMuscleProps {
@@ -10,11 +11,13 @@ const GainMuscle: React.FC<GainMuscleProps> = ({onComplete}) => {
     const [questionIndex, setQuestionIndex] = useState(0);
     const [changeDays, setChangeDays ] = useState<boolean>();
     const [workoutDays, setDays] = useState<number>(0);
+    const [chosenWorkout, setChosenWorkout] = useState<string>('');
 
     const handleSubmit = async () => {
         if(workoutDays !== null){
             try {
-                await gainMuscleChallange(workoutDays, true)
+                const documentID = await fetchDocumentIdByField(appwriteConfig.loseWeightId, 'users', user.id)
+                await updateUserDocument( documentID, appwriteConfig.loseWeightId,chosenWorkout, workoutDays)
                 onComplete()
             } catch (error) {
                 console.log(error)
@@ -54,6 +57,34 @@ const GainMuscle: React.FC<GainMuscleProps> = ({onComplete}) => {
                                 className="mr-2"
                             />
                             No
+                        </label>
+                    </div>
+                </fieldset>
+            )
+        },
+
+        {
+            question: (
+                <fieldset>
+                    <legend className="text-lg font-semibold mb-2">Would you like to lift heavy weight or light weight?</legend>
+                    <div>
+                        <label className="block">
+                            <input
+                                type="radio"
+                                value="heavy"
+                                onChange={(e) => setChosenWorkout(e.target.value)}
+                                className="mr-2"
+                            />
+                                Heavy
+                        </label>
+                        <label className="block">
+                            <input
+                                type="radio"
+                                value="light"
+                                onChange={(e) => setChosenWorkout(e.target.value)}
+                                className="mr-2"
+                            />
+                            Light
                         </label>
                     </div>
                 </fieldset>

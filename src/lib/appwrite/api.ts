@@ -500,7 +500,7 @@ export const loseWeightChallange = async (values: ILoseWeightInfo) => {
         console.log(error)
     }
 }
-export const gainMuscleChallange = async (days: number, completion: boolean) => {
+export const gainMuscleChallange = async (days: number, complete: boolean) => {
     try {
         const document = await databases.updateDocument(
             appwriteConfig.databaseId,
@@ -508,7 +508,7 @@ export const gainMuscleChallange = async (days: number, completion: boolean) => 
             ID.unique(),
             {
                 days,
-                completion
+                complete
             }
         )
         return document
