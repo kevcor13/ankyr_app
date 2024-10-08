@@ -439,12 +439,13 @@ export const setUserGoalCompletion = async (userId: string) => {
     }
 };
 
-export const updateUserDocument = async (userId: string, collection: string, chosenWorkout: string, days: number) => {
+export const updateUserDocument = async (collection: string, documentID: string, info: ILoseWeightInfo) => {
     try {
-        const response = await databases.updateDocument(appwriteConfig.databaseId, collection, userId,
+        const response = await databases.updateDocument(appwriteConfig.databaseId, collection, documentID,
         {
-            chosenWorkout,
-            days
+            chosenWorkout: info.chosenWorkout,
+            days: info.days,
+            weightSize: info.weightSize
         })
         console.log("info has been updated")
         return response
@@ -463,6 +464,7 @@ export const UserDailyGoal = async (documentID: string, collection: string) => {
         console.log(error)
     }
 }
+
 
 /** user completion functions */
 export const fetchUserCompletion = async (userId: string) => {
@@ -485,6 +487,7 @@ export const fetchUserSecondCompletion = async (userId: string) => {
         throw new Error('Failed to fetch user completion');
     }
 };
+
 
 /** creation of documents to determine which challnage user choose */
 export const loseWeightChallange = async (values: ILoseWeightInfo) => {
@@ -519,6 +522,16 @@ export const gainMuscleChallange = async (days: number, complete: boolean) => {
 export const creatingChallangeDocument = async (userId: string, userGoal: string) => {
     try {
         console.log(userGoal);
+        const challange = await databases.createDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.loseWeightId,
+            ID.unique(),
+            {
+                user: userId,
+                ChosenGoal: userGoal
+            }
+        )
+        /*
         if(userGoal === "lose weight"){
                 const challange = await databases.createDocument(
                 appwriteConfig.databaseId,
@@ -551,12 +564,9 @@ export const creatingChallangeDocument = async (userId: string, userGoal: string
             {
                 userID: userId,
             }
-        )
+        ) */
         console.log('the gain muscle challange has been created')
         return challange;
-    }
-        
-
     } catch (error) {
         console.log(error)
     }

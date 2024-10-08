@@ -18,7 +18,11 @@ const LoseWeight: React.FC<LoseWeightProps> = ({ onComplete }) => {
         if (chosenWorkout !== null) {
             try {
                 const documentID = await fetchDocumentIdByField(appwriteConfig.loseWeightId, 'user', user.id)
-                await updateUserDocument( documentID, appwriteConfig.loseWeightId, chosenWorkout, days)
+                await updateUserDocument(appwriteConfig.loseWeightId, documentID , {
+                    chosenWorkout: '', 
+                    days,
+                    weightSize: chosenWorkout
+                })
                 onComplete();
             } catch (error) {
                 console.log(error);

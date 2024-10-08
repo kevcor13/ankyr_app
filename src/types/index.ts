@@ -82,8 +82,8 @@ export interface IUpdateUserInfo{
 }
 
 export interface ILoseWeightInfo{
-  userId: string
   chosenWorkout: string;
   days?: number;
+  weightSize: string;
 }
 

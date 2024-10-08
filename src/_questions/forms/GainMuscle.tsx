@@ -10,14 +10,18 @@ const GainMuscle: React.FC<GainMuscleProps> = ({onComplete}) => {
     const { user } = useUserContext();
     const [questionIndex, setQuestionIndex] = useState(0);
     const [changeDays, setChangeDays ] = useState<boolean>();
-    const [workoutDays, setDays] = useState<number>(0);
+    const [days, setDays] = useState<number>(0);
     const [chosenWorkout, setChosenWorkout] = useState<string>('');
 
     const handleSubmit = async () => {
-        if(workoutDays !== null){
+        if(days !== null){
             try {
-                const documentID = await fetchDocumentIdByField(appwriteConfig.loseWeightId, 'users', user.id)
-                await updateUserDocument( documentID, appwriteConfig.loseWeightId,chosenWorkout, workoutDays)
+                const documentID = await fetchDocumentIdByField(appwriteConfig.loseWeightId, 'user', user.id)
+                await updateUserDocument(appwriteConfig.loseWeightId, documentID , {
+                    chosenWorkout: '', 
+                    days,
+                    weightSize: chosenWorkout
+                })
                 onComplete()
             } catch (error) {
                 console.log(error)
@@ -100,7 +104,7 @@ const GainMuscle: React.FC<GainMuscleProps> = ({onComplete}) => {
                     <div>
                         <input
                             type="number"
-                            value={workoutDays}
+                            value={days}
                             onChange={(e) => setDays(Number(e.target.value))}
                             className="mr-2 p-2"
                             min="1"
