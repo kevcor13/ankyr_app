@@ -426,19 +426,6 @@ export const fetchDocumentIdByField = async (collectionId: string, field: string
     }
 };
 
-export const setUserGoalCompletion = async (userId: string) => {
-    try {
-        const response = await databases.updateDocument(appwriteConfig.databaseId, appwriteConfig.userCollectionId, userId, {
-            secondComplete: true,
-        });
-        console.log("completion has been changed")
-        return response;
-    } catch (error) {
-        console.error('Error setting user goal completion:', error);
-        throw error;
-    }
-};
-
 export const updateUserDocument = async (collection: string, documentID: string, info: ILoseWeightInfo) => {
     try {
         const response = await databases.updateDocument(appwriteConfig.databaseId, collection, documentID,
@@ -464,61 +451,7 @@ export const UserDailyGoal = async (documentID: string, collection: string) => {
         console.log(error)
     }
 }
-
-
-/** user completion functions */
-export const fetchUserCompletion = async (userId: string) => {
-    try {
-        const complete = await databases.getDocument(appwriteConfig.databaseId, appwriteConfig.userCollectionId, userId);
-        console.log(complete.complete);
-        return complete.complete;
-    } catch (error) {
-        console.log(error);
-        throw new Error('Failed to fetch user completion');
-    }
-};
-export const fetchUserSecondCompletion = async (userId: string) => {
-    try {
-        const complete = await databases.getDocument(appwriteConfig.databaseId, appwriteConfig.userCollectionId, userId);
-        console.log(complete.complete);
-        return complete.secondComplete;
-    } catch (error) {
-        console.log(error);
-        throw new Error('Failed to fetch user completion');
-    }
-};
-
-
 /** creation of documents to determine which challnage user choose */
-export const loseWeightChallange = async (values: ILoseWeightInfo) => {
-    try {
-        const document = await databases.createDocument(
-            appwriteConfig.databaseId,
-            appwriteConfig.loseWeightId,
-            ID.unique(),
-            values
-        )
-        return document
-    } catch (error) {
-        console.log(error)
-    }
-}
-export const gainMuscleChallange = async (days: number, complete: boolean) => {
-    try {
-        const document = await databases.updateDocument(
-            appwriteConfig.databaseId,
-            appwriteConfig.gainMuscleId,
-            ID.unique(),
-            {
-                days,
-                complete
-            }
-        )
-        return document
-    } catch (error) {
-        console.log(error)
-    }
-}
 export const creatingChallangeDocument = async (userId: string, userGoal: string) => {
     try {
         console.log(userGoal);

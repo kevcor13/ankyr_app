@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { useUserContext } from '@/context/AutnContext';
-import { fetchDocumentIdByField, fetchUserGoal, fetchUserSecondCompletion, UserDailyGoal,  } from '@/lib/appwrite/api';
+import { fetchDocumentIdByField, fetchUserGoal,UserDailyGoal,  } from '@/lib/appwrite/api';
 
 
 const ChallengesPage = () => {
@@ -17,16 +17,14 @@ const ChallengesPage = () => {
             if (!user.id) return;
             try {
                 const goal = await fetchUserGoal(user.id);
-                const completion = await fetchUserSecondCompletion(user.id)
 
 
                 console.log(goal)
-                console.log(completion)
             } catch (error) {
                 console.error('Error retrieving user data:', error);
             }
         };
-        
+
         const fetchDailyGoal = async () => {
             if (!user.id) return;
             try {

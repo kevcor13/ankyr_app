@@ -1,5 +1,5 @@
 import { useUserContext } from "@/context/AutnContext";
-import { fetchDocumentIdByField, loseWeightChallange, updateUserDocument } from "@/lib/appwrite/api";
+import { fetchDocumentIdByField, updateUserDocument } from "@/lib/appwrite/api";
 import { appwriteConfig } from "@/lib/appwrite/config";
 import { useState } from "react";
 
